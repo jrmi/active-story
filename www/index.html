@@ -12,25 +12,35 @@
 
         <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-        <link rel="stylesheet" href="css/normalize.css">
-        <link rel="stylesheet" href="css/main.css">
+        <!--link rel="stylesheet" href="css/normalize.css"-->
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/bootstrap-theme.min.css">
+        <!--link rel="stylesheet" href="css/main.css"-->
+        <link rel="stylesheet" href="css/custom.css">
         <script src="js/vendor/modernizr-2.6.2.min.js"></script>
     </head>
     <body>
         <div id="content">
-            <div id="story"></div>
-            <div id="editor">
-                <div id="error"></div>
-                <textarea id="input" cols="60"></textarea>
-                <button id="comp">Compute</button>
-                <button id="save">Save</button>
-                <a id="download" download="story.js">Download</a>
+            <ul class="nav nav-tabs">
+              <li class="active"><a href="#story" data-toggle="tab" id="story-tab">Story</a></li>
+              <li><a href="#editor" data-toggle="tab">Edit</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane active" id="story"></div>
+                <div id="editor" class="tab-pane">
+                    <div id="error"></div>
+                    <textarea id="input" cols="60"></textarea>
+                    <div class="btn-group">
+                      <a id="download" download="story.js" class="btn btn-default">Download</a>
+                    </div>
+                </div>
             </div>
         </div>
 
 
         <script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
         <script>window.jQuery || document.write('<script src="js/vendor/jquery-1.10.2.min.js"><\/script>')</script>
+        <script src="js/vendor/bootstrap.min.js"></script>
         <script src="js/vendor/markdown.js"></script>
         <script src="js/vendor/mustache.js"></script>
         <script src="js/plugins.js"></script>

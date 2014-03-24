@@ -1,18 +1,8 @@
-(function(scene, story){
+(function ($, scene, story){
 	"use strict";
 
     scene.load(story);
 
-    function downloady(content, filename, contentType){
-        if(!contentType)
-            contentType = 'application/octet-stream';
-        var a = $('<a>Télécharger</a>');
-        var blob = new Blob([content], {'type': contentType});
-        a.attr('href', window.URL.createObjectURL(blob));
-        a.attr('download', filename);
-        $('body').append(a);
-        a.click();
-    };
     function mkDldURL(content, contentType){
         if(!contentType)
             contentType = 'application/octet-stream';
@@ -22,14 +12,8 @@
 
 	$().ready(function(){
 		$('#input').val(scene.get('Start'));
-        window.onhashchange = function(e){
-            var next_scene = location.hash.substr(1);
-            next_scene = next_scene ? next_scene : 'Start';
-            console.log(next_scene);
-            $('#input').val(scene.get(next_scene));
-			$('#comp').click();
-        }
-		$('#comp').on('click', function(evt){
+        
+        function updateStory(){
 			var text = $("#input").val();
 			$("#error").empty();
 
@@ -38,15 +22,29 @@
 			}
 			catch(exp){
 				$("#error").html(exp);
-			    $("#story").empty();
+			    $("#story").empty().htam("Error, go back to see. !");
 				return false;
 			}
-
-		}).click();
-
-		$('#save').on('click', function(evt){
+        }
+        
+        function saveStory(){
 			scene.save($('#input').val());
 			$('#download').attr('href', mkDldURL("var scenes=" + scene.export() + ";", 'application/javascript'));
-		});
+        }
+        
+        window.onhashchange = function(e){
+            var next_scene = location.hash.substr(1);
+            next_scene = next_scene ? next_scene : 'Start';
+            
+            $('#input').val(scene.get(next_scene));
+			updateStory();
+        }
+        
+        $('#story-tab').on('shown.bs.tab', function (e) {
+            updateStory();
+            saveStory();
+        });
+        
+        updateStory();
 	});
-})(scene, scenes);
+})($, scene, scenes);
