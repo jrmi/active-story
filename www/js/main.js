@@ -22,12 +22,13 @@
 
 	$().ready(function(){
 		$('#input').val(scene.get('Start'));
-
-		$('body').on('click', ".internal", function(e){
-			e.preventDefault();
-			$('#input').val(scene.get($(this).attr('href')));
+        window.onhashchange = function(e){
+            var next_scene = location.hash.substr(1);
+            next_scene = next_scene ? next_scene : 'Start';
+            console.log(next_scene);
+            $('#input').val(scene.get(next_scene));
 			$('#comp').click();
-		});
+        }
 		$('#comp').on('click', function(evt){
 			var text = $("#input").val();
 			$("#error").empty();

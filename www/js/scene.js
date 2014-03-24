@@ -14,7 +14,7 @@
 				if(href.indexOf('http') !== 0){
 					jsonml[1]['class'] = "internal";
                     var scene_name = jsonml[1].href.replace(/\s+/, "_");
-					jsonml[1].href = scene_name;
+					jsonml[1].href = '#' + scene_name;
 					if(!scene.exists(scene_name)){
 						jsonml[2] = jsonml[2] + ' ?';
 					    jsonml[1]['class'] += " new";
@@ -53,7 +53,7 @@
 
 	window.scene = function(){
 		var scenes = {};
-		var current_scene = '';
+		var current_scene = 'Start';
 		return {
 			'current_scene': function(){
 				return current_scene;
@@ -78,7 +78,7 @@
 				scenes[current_scene] = text;
 			},
             'render': function(text){
-				var output = Mustache.render(text, context);
+				var output = Mustache.render(text, context, scenes);
 				//output = markdown.toHTML(output);
 				output = ISMDParse(output, this);
 				output = parseContext(output, context);
