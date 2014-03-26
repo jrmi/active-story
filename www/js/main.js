@@ -12,7 +12,8 @@
 
 	$().ready(function(){
 		$('#input').val(scene.get('Start'));
-        
+        var history=['Start'];
+
         function updateStory(){
 			var text = $("#input").val();
 			$("#error").empty();
@@ -25,6 +26,7 @@
 			    $("#story").empty().htlm("<p>Error, go back to see. !</p>");
 				return false;
 			}
+            
         }
         
         function saveStory(){
@@ -48,7 +50,23 @@
             var next_scene = location.hash.substr(1);
             next_scene = next_scene ? next_scene : 'Start';
             
+            var found = history.indexOf(next_scene);
+            if(found > -1){
+                history.splice(found, 1);
+            }
+            history.unshift(next_scene);
+            if(history.length > 10){
+                history.pop();
+            }
+            $('#history').empty();
+            for(var i in history){
+                var a = $('<a/>').attr('href','#' + history[i]).text(history[i]);
+                var li = $('<li/>').append(a)
+                $('#history').append(li);
+            }
+            
             $('#input').val(scene.get(next_scene));
+            $('#title').html(next_scene);
 			updateStory();
         }
         
