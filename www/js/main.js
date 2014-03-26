@@ -22,14 +22,26 @@
 			}
 			catch(exp){
 				$("#error").html(exp);
-			    $("#story").empty().htam("Error, go back to see. !");
+			    $("#story").empty().htlm("<p>Error, go back to see. !</p>");
 				return false;
 			}
         }
         
         function saveStory(){
 			scene.save($('#input').val());
-			$('#download').attr('href', mkDldURL("var scenes=" + scene.export() + ";", 'application/javascript'));
+			$('#download').attr('href', mkDldURL(scene.export(), 'application/javascript'));
+        }
+
+        function importStory(e){
+            var f = e.target.files[0];
+            var reader = new FileReader();
+        
+            reader.onload = function(e){
+                scene.load(JSON.parse(reader.result));
+                $('#input').val(scene.get('Start'));
+                updateStory();
+            }
+            reader.readAsText(f);
         }
         
         window.onhashchange = function(e){
@@ -45,6 +57,8 @@
             saveStory();
         });
         
+        $('#load').change(importStory);
+        
         updateStory();
 	});
-})($, scene, scenes);
+})($, scene, {});

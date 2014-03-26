@@ -24,14 +24,19 @@
             <ul class="nav nav-tabs">
               <li class="active"><a href="#story" data-toggle="tab" id="story-tab">Story</a></li>
               <li><a href="#editor" data-toggle="tab">Edit</a></li>
+              <li><a href="#impexp" data-toggle="tab">Import/Export</a></li>
             </ul>
             <div class="tab-content">
                 <div class="tab-pane active" id="story"></div>
-                <div id="editor" class="tab-pane">
+                <div class="tab-pane" id="editor">
                     <div id="error"></div>
                     <textarea id="input" cols="60"></textarea>
+                </div>
+                <div class="tab-pane" id="impexp">
+                    <label>Import file : </label><input type="file" id="load" name="file">
+                    <hr>
                     <div class="btn-group">
-                      <a id="download" download="story.js" class="btn btn-default">Download</a>
+                      <a id="download" download="story.js" class="btn btn-default">Export</a>
                     </div>
                 </div>
             </div>
