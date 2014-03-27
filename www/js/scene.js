@@ -72,6 +72,7 @@
 				if(!this.exists(name)){
 					return "Empty scene !";
 				}
+                context['visited__' + name] = true;
 				return scenes[name];
 			},
 			'save': function(text){
@@ -89,6 +90,9 @@
             },
             'export': function(){
                 return JSON.stringify(scenes);
+            },
+            'getContext': function(){
+                return context;
             }
 		}
 	}();

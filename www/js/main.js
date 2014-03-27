@@ -37,10 +37,11 @@
         function importStory(e){
             var f = e.target.files[0];
             var reader = new FileReader();
-        
+            var history = []; 
             reader.onload = function(e){
                 scene.load(JSON.parse(reader.result));
                 $('#input').val(scene.get('Start'));
+                location.hash = '#Start';
                 updateStory();
             }
             reader.readAsText(f);
