@@ -1,7 +1,7 @@
-(function ($, scene, story){
+(function ($, storyMgr){
 	"use strict";
 
-    scene.load(story);
+    storyMgr.load({});
 
     function mkDldURL(content, contentType){
         if(!contentType)
@@ -11,27 +11,11 @@
     };
 
 	$().ready(function(){
-		$('#input').val(scene.get('Start'));
-        var history=['Start'];
+		$('#input').val(storyMgr.getScene());
 
-        function updateStory(){
-			var text = $("#input").val();
-			$("#error").empty();
-
-			try{
-			    $("#story").html(scene.render(text));
-			}
-			catch(exp){
-				$("#error").html(exp);
-			    $("#story").empty().htlm("<p>Error, go back to see. !</p>");
-				return false;
-			}
-            
-        }
-        
         function saveStory(){
-			scene.save($('#input').val());
-			$('#download').attr('href', mkDldURL(scene.export(), 'application/javascript'));
+			storyMgr.setScene($('#input').val());
+			$('#download').attr('href', mkDldURL(JSON.stringify(storyMgr.dump()), 'application/json'));
         }
 
         function importStory(e){
@@ -39,35 +23,44 @@
             var reader = new FileReader();
             var history = []; 
             reader.onload = function(e){
-                scene.load(JSON.parse(reader.result));
-                $('#input').val(scene.get('Start'));
-                location.hash = '#Start';
+                storyMgr.load(JSON.parse(reader.result));
+                $('#input').val(storyMgr.getScene());
+                location.hash = '#' + storyMgr.getTitle();
                 updateStory();
             }
             reader.readAsText(f);
         }
-        
+
+        function updateStory(){
+            storyMgr.setScene($("#input").val());
+            $("#error").empty();
+
+            try{
+                $("#story").html(storyMgr.render());
+            }
+            catch(exp){
+                $("#error").html(exp);
+                $("#story").empty().htlm("<p>Error, go back to see. !</p>");
+                return false;
+            }
+            
+        }
+
         window.onhashchange = function(e){
             var next_scene = location.hash.substr(1);
             next_scene = next_scene ? next_scene : 'Start';
+            storyMgr.goto(next_scene);
             
-            var found = history.indexOf(next_scene);
-            if(found > -1){
-                history.splice(found, 1);
-            }
-            history.unshift(next_scene);
-            if(history.length > 10){
-                history.pop();
-            }
             $('#history').empty();
+            var history = storyMgr.getHistory();
             for(var i in history){
                 var a = $('<a/>').attr('href','#' + history[i]).text(history[i]);
                 var li = $('<li/>').append(a)
                 $('#history').append(li);
             }
             
-            $('#input').val(scene.get(next_scene));
-            $('#title').html(next_scene);
+            $('#input').val(storyMgr.getScene());
+            $('#title').html(storyMgr.getTitle());
 			updateStory();
         }
         
@@ -80,4 +73,4 @@
         
         updateStory();
 	});
-})($, scene, {});
+})($, storyMgr);

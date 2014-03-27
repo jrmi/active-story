@@ -3,7 +3,7 @@
 
     var context = {};
 
-	function ISMDParse(text, scene){
+	function ISMDParse(text, story){
 		// iterate through the tree finding link references
 		// parse the markdown into a tree and grab the link references
 		var tree = markdown.parse( text );
@@ -15,7 +15,7 @@
 					jsonml[1]['class'] = "internal";
                     var scene_name = jsonml[1].href.replace(/\s+/, "_");
 					jsonml[1].href = '#' + scene_name;
-					if(!scene.exists(scene_name)){
+					if(!story.exists(scene_name)){
 						jsonml[2] = jsonml[2] + ' ?';
 					    jsonml[1]['class'] += " new";
 					}
@@ -51,45 +51,57 @@
 		return text;
 	}
 
-	window.scene = function(){
-		var scenes = {};
-		var current_scene = 'Start';
+	window.storyMgr = function(){
+		var story = {};
+		var history = [];
+        var current = '';
 		return {
-			'current_scene': function(){
-				return current_scene;
-			},
-			'add': function(name, text){
-				scenes[name] = text;
-			},
-            'load': function(story){
-                scenes = story;
+            'load': function(new_story){
+                story = new_story;
+                current = 'Start';
+                context = {};
+                history = [];
             },
-			'exists': function(name){
-				return (typeof scenes[name] !== 'undefined');
-			},
-			'get': function(name){
-				current_scene = name;
-				if(!this.exists(name)){
-					return "Empty scene !";
-				}
-                context['visited__' + name] = true;
-				return scenes[name];
-			},
-			'save': function(text){
-				scenes[current_scene] = text;
-			},
-            'render': function(text){
-				var output = Mustache.render(text, context, scenes);
-				//output = markdown.toHTML(output);
+            'dump': function(){
+                return story;
+            },
+            'goto': function(next_scene){
+                // Update history
+                var found = history.indexOf(current);
+                if(found > -1){
+                    history.splice(found, 1);
+                }
+                history.unshift(current);
+                if(history.length > 10){
+                    history.pop();
+                }
+                current = next_scene;
+            },
+            'render': function(){
+				var output = Mustache.render(story[current], context, story);
 				output = ISMDParse(output, this);
 				output = parseContext(output, context);
                 return output;
             },
-            'renderCurrent': function(){
-                return this.render(this.get(this.current_scene()));
+			'exists': function(name){
+				return (typeof story[name] !== 'undefined');
+			},
+            'getScene': function(){
+                if(!this.exists(current)){
+                    return "Empty scene !";
+                }
+                else{
+                    return story[current];
+                }
             },
-            'export': function(){
-                return JSON.stringify(scenes);
+            'setScene': function(text){
+                story[current] = text;
+            },
+            'getHistory': function(){
+                return history;
+            },
+            'getTitle': function(){
+                return current;
             },
             'getContext': function(){
                 return context;
