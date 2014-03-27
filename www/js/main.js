@@ -52,12 +52,7 @@
             storyMgr.goto(next_scene);
             
             $('#history').empty();
-            var history = storyMgr.getHistory();
-            for(var i in history){
-                var a = $('<a/>').attr('href','#' + history[i]).text(history[i]);
-                var li = $('<li/>').append(a)
-                $('#history').append(li);
-            }
+            $('#history').html(Mustache.render($("#history_tpl").html(), {history: storyMgr.getHistory()}));
             
             $('#input').val(storyMgr.getScene());
             $('#title').html(storyMgr.getTitle());

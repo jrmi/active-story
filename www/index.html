@@ -32,7 +32,13 @@
                     <h1 id="title"></h1>
                     <div id="error"></div>
                     <textarea id="input" cols="60"></textarea>
-                    <ul id="history"></ul>
+                    <ul id="history">
+                    </ul>
+                    <script id="history_tpl" type="text/mustache">
+                        {{#history}}
+                            <li><a href="#{{.}}">{{.}}</a></li>
+                        {{/history}}
+                    </script>
                 </div>
                 <div class="tab-pane" id="impexp">
                     <label>Import file : </label><input type="file" id="load" name="file">
