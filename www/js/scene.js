@@ -75,7 +75,7 @@
                 if(history.length > 10){
                     history.pop();
                 }
-                context['visited__' + current] = true;
+                context[current] = true;
                 current = next_scene;
             },
             'render': function(){

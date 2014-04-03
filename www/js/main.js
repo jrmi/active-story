@@ -40,7 +40,7 @@
             }
             catch(exp){
                 $("#error").html(exp);
-                $("#story").empty().htlm("<p>Error, go back to see. !</p>");
+                $("#story").empty().html("<p>Error, go back to see. !</p>");
                 return false;
             }
             
