@@ -1,7 +1,10 @@
 (function ($, storyMgr){
 	"use strict";
 
-    storyMgr.load({});
+    //storyMgr.load({});
+    storyMgr.clearContext();
+    storyMgr.setCurrent('Start');
+    location.hash = '#' + storyMgr.getTitle();
 
     function mkDldURL(content, contentType){
         if(!contentType)

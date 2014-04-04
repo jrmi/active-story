@@ -1,7 +1,6 @@
 (function($, markdown, Mustache){
 	"use strict";
 
-    var context = {};
 
 	function ISMDParse(text, story){
 		// iterate through the tree finding link references
@@ -35,15 +34,15 @@
 		return(markdown.renderJsonML( markdown.toHTMLTree( tree ) ));
 	}
 
-	function parseContext(text, context){
+	function parseContext(text, story){
 		text = text.replace(/\{%\s*([^\}]*)\s*%\}/g, function(match, content) {
 			content.replace(/\s*([^\s]+)+\s*/g, function(match, content){
 				if(content.charAt(0) === '-'){
 					content = content.substr(1);
-					context[content] = false;
+                    story.setContext(content, false);
 				}
 				else{
-					context[content] = true;
+                    story.setContext(content, true);
 				}
 			});
 			return "";
@@ -52,60 +51,81 @@
 	}
 
 	window.storyMgr = function(){
-		var story = {};
 		var history = [];
-        var current = '';
 		return {
             'load': function(new_story){
-                story = new_story;
-                current = 'Start';
-                context = {};
+                localStorage.clear();
+                for(var key in new_story){
+                    localStorage.setItem(key, new_story[key]);
+                }
+                this.setCurrent('Start');
+                this.clearContext();
                 history = [];
             },
             'dump': function(){
+                var story = {};
+                for(var key in localStorage){
+                    if(key.charAt(0) !== '_'){
+                        story[key] = localStorage[key];
+                    } 
+                }
                 return story;
             },
             'goto': function(next_scene){
                 // Update history
-                var found = history.indexOf(current);
+                var found = history.indexOf(this.current());
                 if(found > -1){
                     history.splice(found, 1);
                 }
-                history.unshift(current);
+                history.unshift(this.current());
                 if(history.length > 10){
                     history.pop();
                 }
-                context[current] = true;
-                current = next_scene;
+                this.setContext(this.current(), true); 
+                this.setCurrent(next_scene);
             },
             'render': function(){
-				var output = Mustache.render(story[current], context, story);
+				var output = Mustache.render(this.getScene(), this.getContext(), localStorage);
 				output = ISMDParse(output, this);
-				output = parseContext(output, context);
+				output = parseContext(output, this);
                 return output;
             },
 			'exists': function(name){
-				return (typeof story[name] !== 'undefined');
+				return (localStorage.getItem(name) !== null);
 			},
             'getScene': function(){
-                if(!this.exists(current)){
+                if(!this.exists(this.current())){
                     return "Empty scene !";
                 }
                 else{
-                    return story[current];
+                    return localStorage[this.current()];
                 }
             },
             'setScene': function(text){
-                story[current] = text;
+                localStorage[this.current()] = text;
             },
             'getHistory': function(){
                 return history;
             },
             'getTitle': function(){
-                return current;
+                return localStorage['__current'];
+            },
+            'current': function(){
+                return localStorage['__current'];
+            },
+            'setCurrent': function(name){
+                localStorage['__current'] = name;
             },
             'getContext': function(){
-                return context;
+                return JSON.parse(localStorage.getItem('__context') || '{}');
+            },
+            'clearContext': function(){
+                localStorage['__context'] = '{}';
+            },
+            'setContext': function(key, value){
+                var context = this.getContext();
+                context[key] = value;
+                localStorage['__context'] = JSON.stringify(context);
             }
 		}
 	}();
