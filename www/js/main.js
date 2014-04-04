@@ -64,6 +64,9 @@
         
         $('#story-tab').on('shown.bs.tab', function (e) {
             updateStory();
+        });
+
+        $('#input').blur(function(){
             saveStory();
         });
         
