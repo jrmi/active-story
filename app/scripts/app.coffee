@@ -9,7 +9,7 @@
  # Main module of the application.
 ###
 angular
-  .module('activeStoryApp', [
+.module('activeStoryApp', [
     'ngAnimate',
     'ngCookies',
     'ngResource',
@@ -18,14 +18,17 @@ angular
     'ngTouch',
     'ngStorage'
   ])
-  .config ($routeProvider) ->
-    $routeProvider
-      .when '/',
-        templateUrl: 'views/main.html'
-        controller: 'MainCtrl'
-      .when '/:pageName',
-        templateUrl: 'views/main.html'
-        controller: 'MainCtrl'
-      .otherwise
-        redirectTo: '/'
+.config ($routeProvider) ->
+  $routeProvider
+  .when '/',
+    templateUrl: 'views/storyList.html'
+    controller: 'StoryListCtrl'
+  .when '/story/:storyUid/edit/',
+    templateUrl: 'views/story.html'
+    controller: 'StoryCtrl'
+  .when '/story/:storyUid/page/:pageName',
+    templateUrl: 'views/main.html'
+    controller: 'MainCtrl'
+  .otherwise
+      redirectTo: '/'
 

@@ -1,14 +1,20 @@
+<!--h1>{{pageName}}</h1-->
+<h1>{{currentStory.title}}</h1>
+<div ng-show="currentStory.canEdit">
+    <a class="btn btn-primary pull-right" ng-click="editMode = ! editMode">
+        <span ng-hide="editMode"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</span>
+        <span ng-show="editMode"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View</span>
+    </a>
+</div>
+
 <div ng-if="editMode">
-    <h1>{{pageName}}</h1>
-    <textarea id="editor" ng-model="$localStorage['page__' + pageName]"></textarea>
+    <h1>Edition: {{pageName}}</h1>
+    <textarea id="editor" ng-model="$localStorage.pages[pageName]"></textarea>
 </div>
 
 <div ng-if="!editMode">
-    <h1>{{pageName}}</h1>
-    <div ng-if="$localStorage['page__' + pageName]" ng-bind-html="$localStorage['page__' + pageName]|parseText"></div>
-    <p ng-if="!$localStorage['page__' + pageName]">No page yet. <a href="" ng-click="newPage()">Create it !</a></p>
+    <div ng-if="$localStorage.pages[pageName]" ng-bind-html="$localStorage.pages[pageName]|parseText"></div>
+    <p ng-if="!$localStorage.pages[pageName]">
+        No page yet. <a ng-if="currentStory.canEdit" href="" ng-click="newPage()">Create it !</a>
+    </p>
 </div>
-<a class="btn btn-primary" ng-click="editMode = ! editMode">
-    <span ng-hide="editMode">Edit</span>
-    <span ng-show="editMode">View</span>
-</a>

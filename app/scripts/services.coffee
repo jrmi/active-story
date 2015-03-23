@@ -117,8 +117,9 @@ angular.module('activeStoryApp')
     return $window.marked(text || '', {renderer: rend})
   }
 
-.factory 'utils', ($window) ->
-  context = {}
+.factory 'utils', ($window, $localStorage) ->
+  if !$localStorage.context?
+    $localStorage.context = {}
 
   removeDiacritics = (str) ->
     return str.replace /[^\u0000-\u007E]/g, (a) ->
@@ -130,7 +131,8 @@ angular.module('activeStoryApp')
   rend.link = (href, title, text) ->
     if href.indexOf('http') != 0
       escapedLink = removeDiacritics(href.toLowerCase()).replace(/[^\w]+/g, '-')
-      link = '<a href="#/' + escapedLink + '" title="' + (title || '') + '">' + text + '</a> '
+      href = '#/story/' + $localStorage.currentUid + "/page/" + escapedLink
+      link = '<a href="' + href + '" title="' + (title || '') + '">' + text + '</a> '
       return link;
 
     else
@@ -138,16 +140,13 @@ angular.module('activeStoryApp')
 
   return {
 
-  clearContext: ()->
-    context = {}
-
   parseContext: (text) ->
     text = text.replace /\{%\s*([^\}]*)\s*%\}/g, (match, content) ->
       content.replace /\s*([^\s]+)+\s*/g, (match, content) ->
         if content.charAt(0) == '!'
-          context[content[1..]] = 0
+          $localStorage.context[content[1..]] = 0
         else
-          context[content] = 1
+          $localStorage.context[content] = 1
         return ''
       return ''
     return text
@@ -156,7 +155,7 @@ angular.module('activeStoryApp')
     return $window.marked(text || '', {renderer: rend})
 
   mustache: (text) ->
-    return $window.Mustache.render(text, context) # TODO add partials from other pages
+    return $window.Mustache.render(text, $localStorage.context, $localStorage.pages) # TODO add partials from other pages
 
   render: (text) ->
     newText = @mustache(text)
@@ -168,4 +167,50 @@ angular.module('activeStoryApp')
       contentType = 'application/octet-stream'
     blob = new $window.Blob [content], {'type': contentType}
     return $window.URL.createObjectURL(blob)
+
+  guid: () ->
+    _p8(s) ->
+        p = (Math.random().toString(16)+"000000000").substr(2,8);
+        return if s then "-" + p.substr(0,4) + "-" + p.substr(4,4) else p ;
+    return _p8() + _p8(true) + _p8(true) + _p8();
+
+  }
+
+
+.factory 'stories', ($q, utils) ->
+  stories = [
+      {
+        uid: 'story1'
+        canEdit: false
+        title: "Une belle histoire"
+        pages: {}
+      }
+      {
+        uid: 'story2'
+        canEdit: true
+        title: "Une autre belle histoire"
+        pages: {}
+      }
+    ]
+  return {
+    all: stories
+    get: (uid) ->
+      defered = $q.defer()
+      promise = defered.promise
+      for s in stories
+        if s.uid == uid
+          defered.resolve(s)
+          return promise
+
+      defered.reject()
+      return promise
+
+    create: () ->
+      return {
+        uid: utils.guid()
+        canEdit: True
+        title: "Default"
+        pages: {}
+      }
+
   }
