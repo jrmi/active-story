@@ -15,16 +15,17 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'ngStorage'
   ])
   .config ($routeProvider) ->
     $routeProvider
       .when '/',
         templateUrl: 'views/main.html'
         controller: 'MainCtrl'
-      .when '/about',
-        templateUrl: 'views/about.html'
-        controller: 'AboutCtrl'
+      .when '/:pageName',
+        templateUrl: 'views/main.html'
+        controller: 'MainCtrl'
       .otherwise
         redirectTo: '/'
 
