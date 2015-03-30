@@ -132,7 +132,7 @@ angular.module('activeStoryApp')
     if href.indexOf('http') != 0
       escapedLink = removeDiacritics(href.toLowerCase()).replace(/[^\w]+/g, '-')
       href = '#/story/' + $localStorage.currentUid + "/page/" + escapedLink
-      link = '<a href="' + href + '" title="' + (title || '') + '">' + text + '</a> '
+      link = '<a href="' + href + '" title="' + (title || '') + '">' + text + '</a>'
       return link;
 
     else
