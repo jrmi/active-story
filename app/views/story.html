@@ -1,4 +1,5 @@
 <div>
     <label>Title</label><input type="text" ng-model="currentStory.title"/>
-    <a href="#/story/{{currentStory.uid}}/page/start" class="btn btn-primary">Start</a>
+    <a href="" ng-click="currentStory.$save()" class="btn btn-primary">Save</a>
+    <a href="#/story/{{currentStory._id}}/page/start" class="btn btn-primary">Start</a>
 </div>

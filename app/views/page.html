@@ -1,7 +1,7 @@
 <!--h1>{{pageName}}</h1-->
-<h1>{{currentStory.title}}</h1>
+<h1>{{currentStory.title}}</h1> <a href="#/story/{{currentStory._id}}/page/start" class="btn btn-primary">Restart</a>
 <div ng-show="currentStory.canEdit">
-    <a class="btn btn-primary pull-right" ng-click="editMode = ! editMode">
+    <a class="btn btn-primary pull-right" ng-click="switchEditMode()">
         <span ng-hide="editMode"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</span>
         <span ng-show="editMode"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View</span>
     </a>
@@ -9,12 +9,12 @@
 
 <div ng-if="editMode">
     <h1>Edition: {{pageName}}</h1>
-    <textarea id="editor" ng-model="$localStorage.pages[pageName]"></textarea>
+    <textarea id="editor" ng-model="page.content"></textarea>
 </div>
 
 <div ng-if="!editMode">
-    <div ng-if="$localStorage.pages[pageName]" ng-bind-html="$localStorage.pages[pageName]|parseText"></div>
-    <p ng-if="!$localStorage.pages[pageName]">
+    <div ng-if="page" ng-bind-html="page.content|parseText"></div>
+    <p ng-if="!page">
         No page yet. <a ng-if="currentStory.canEdit" href="" ng-click="newPage()">Create it !</a>
     </p>
 </div>

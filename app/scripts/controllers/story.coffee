@@ -10,7 +10,7 @@
 angular.module('activeStoryApp')
 .controller 'StoryCtrl', ($scope, stories, $localStorage, $routeParams) ->
 
-  stories.get($routeParams.storyUid).then (story)->
+  stories.get(_id: $routeParams.storyUid).$promise.then (story)->
     $scope.currentStory = story
 
   $localStorage.context = {}

@@ -21,13 +21,13 @@ angular
 .config ($routeProvider) ->
   $routeProvider
   .when '/',
-    templateUrl: 'views/storyList.html'
+    templateUrl: 'views/stories.html'
     controller: 'StoryListCtrl'
   .when '/story/:storyUid/edit/',
     templateUrl: 'views/story.html'
     controller: 'StoryCtrl'
   .when '/story/:storyUid/page/:pageName',
-    templateUrl: 'views/main.html'
+    templateUrl: 'views/page.html'
     controller: 'MainCtrl'
   .otherwise
       redirectTo: '/'

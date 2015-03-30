@@ -1,7 +1,9 @@
 {
   "name": "activestory",
   "version": "0.0.0",
-  "dependencies": {},
+  "dependencies": {
+    "grunt-connect-proxy": "^0.1.11"
+  },
   "devDependencies": {
     "coffee-script": "^1.9.1",
     "grunt": "^0.4.1",

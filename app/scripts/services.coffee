@@ -155,7 +155,7 @@ angular.module('activeStoryApp')
     return $window.marked(text || '', {renderer: rend})
 
   mustache: (text) ->
-    return $window.Mustache.render(text, $localStorage.context, $localStorage.pages) # TODO add partials from other pages
+    return $window.Mustache.render(text, $localStorage.context) # , $localStorage.pages) - TODO add partials from other pages
 
   render: (text) ->
     newText = @mustache(text)
@@ -177,40 +177,11 @@ angular.module('activeStoryApp')
   }
 
 
-.factory 'stories', ($q, utils) ->
-  stories = [
-      {
-        uid: 'story1'
-        canEdit: false
-        title: "Une belle histoire"
-        pages: {}
-      }
-      {
-        uid: 'story2'
-        canEdit: true
-        title: "Une autre belle histoire"
-        pages: {}
-      }
-    ]
-  return {
-    all: stories
-    get: (uid) ->
-      defered = $q.defer()
-      promise = defered.promise
-      for s in stories
-        if s.uid == uid
-          defered.resolve(s)
-          return promise
+.factory 'stories', ($q, utils, $resource) ->
+  ress = $resource('http://localhost:9000/stories/:_id')
+  return ress
 
-      defered.reject()
-      return promise
 
-    create: () ->
-      return {
-        uid: utils.guid()
-        canEdit: True
-        title: "Default"
-        pages: {}
-      }
-
-  }
+.factory 'pages', ($q, utils, $resource) ->
+  ress = $resource('http://localhost:9000/pages/:_id')
+  return ress
