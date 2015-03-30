@@ -1,5 +1,4 @@
 import json
-import bottle
 from json import JSONEncoder
 from bottle import route, run, request, abort
 from pymongo import Connection
@@ -16,7 +15,7 @@ db = connection.interactiveStories
 
 
 @route('/stories')
-def stories_list():
+def stories():
     res = []
     for st in db['stories'].find():
         st['canEdit'] = True
@@ -46,11 +45,11 @@ def story_save():
     return entity
 
 
+# Pages services
+
 @route('/pages')
 def pages():
     pages_list = db['pages'].find(dict(request.query))
-
-
     res = []
     for st in pages_list:
         res.append(st)
