@@ -154,12 +154,12 @@ angular.module('activeStoryApp')
   markdown: (text) ->
     return $window.marked(text || '', {renderer: rend})
 
-  mustache: (text) ->
-    return $window.Mustache.render(text, $localStorage.context) # , $localStorage.pages) - TODO add partials from other pages
+  mustache: (text, partials) ->
+    return $window.Mustache.render(text, $localStorage.context, partials) # , $localStorage.pages) - TODO add partials from other pages
 
-  render: (text) ->
-    newText = @mustache(text)
-    newText = @parseContext(newText)
+  render: (page) ->
+    newText = @mustache(page.content)
+    newText = @parseContext(newText, page.getPartials)
     return @markdown(newText)
 
   makeDldUrl: (content, contentType) ->

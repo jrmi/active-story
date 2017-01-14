@@ -32,7 +32,7 @@
 </div>
 
 <div ng-if="!editMode">
-    <div ng-if="page" ng-bind-html="page.content|parseText"></div>
+    <div ng-if="page" ng-bind-html="page|parseText"></div>
     <p ng-if="!page">
         No page yet. <a ng-if="currentStory.canEdit" href="" ng-click="newPage()">Create it !</a>
     </p>

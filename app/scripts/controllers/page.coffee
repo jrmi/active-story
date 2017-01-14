@@ -29,6 +29,8 @@ angular.module('activeStoryApp')
     pages.query({story: story._id, name: $scope.pageName}).$promise.then (pages)->
       if pages.length > 0
         $scope.page = pages[0]
+        $scope.page.getPartials = (name) ->
+          return pages.get({story: story._id, name: $scope.pageName})
         $localStorage.context['visited__' + $scope.page.name] = 1
 
   $scope.restart = ()->

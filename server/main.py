@@ -58,8 +58,11 @@ def pages():
 
 
 @route('/pages/<uid>', method='GET')
-def page_show(uid):
-    entity = db['pages'].find_one({'_id': ObjectId(uid)})
+def page_show(uid=None):
+    if uid:
+        entity = db['pages'].find_one({'_id': ObjectId(uid)})
+    else:
+        entity = db['pages'].find_one(dict(request.query))
     if not entity:
         abort(404, 'No document with id %s' % id)
     entity['_id'] = str(entity['_id'])

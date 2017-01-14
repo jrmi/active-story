@@ -5,5 +5,5 @@ angular.module('activeStoryApp')
 
 
 .filter 'parseText', ($sce, $compile, utils) ->
-  return (text) ->
-    return $sce.trustAsHtml(utils.render(text || ''))
+  return (page) ->
+    return $sce.trustAsHtml(utils.render(page || ''))
