@@ -15,9 +15,6 @@
 </template>
 
 <script>
-import Story from "@/components/Story.vue";
-import initialStory from "@/assets/test.json";
-import { guid } from "@/utils/text";
 import store from "@/store/store";
 
 export default {
