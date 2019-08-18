@@ -13,6 +13,11 @@ export default new Router({
       component: StoryManager
     },
     {
+      path: '/story/:story',
+      name: 'homeStory',
+      component: StoryView
+    },
+    {
       path: '/story/:story/:scene',
       name: 'story',
       component: StoryView

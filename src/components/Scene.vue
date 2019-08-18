@@ -16,8 +16,7 @@
 </template>
 
 <script>
-import marked from "marked";
-import { removeDiacritics } from "@/utils/text";
+import { removeDiacritics, parseScene } from "@/utils/text";
 import store from "@/store/store";
 
 export default {
@@ -36,49 +35,16 @@ export default {
       currentContent: ""
     };
   },
-  created() {
-    this.addVisitToContext();
-  },
-  watch: {
-    $route(to, from) {
-      this.addVisitToContext();
-      console.log(to, from);
-      //store.actions.addVisit()
-    }
-  },
+  async created() {},
   methods: {
-    async addVisitToContext() {
-      const currentVisitedCount = store.state.context[`visited__${this.scene}`];
-      if (currentVisitedCount === undefined) {
-        await store.actions.setContext(`visited__${this.scene}`, 1);
-      } else {
-        await store.actions.setContext(
-          `visited__${this.scene}`,
-          currentVisitedCount + 1
-        );
-      }
-    },
     parse(text) {
-      console.log("parse called");
-      if (this.story) {
-        console.log("Real render");
-        const renderer = new marked.Renderer();
-        const old_rend = new marked.Renderer();
-        renderer.link = (href, title, text) => {
-          if (href.indexOf("http") != 0) {
-            const escapedLink = removeDiacritics(href.toLowerCase()).replace(
-              /[^\w]+/g,
-              "-"
-            );
-            return `<a href="#/story/${
-              this.story.uid
-            }/${escapedLink}" title="${title}">${text}</a>`;
-          } else {
-            return old_rend.link(href, title, text);
-          }
-        };
-        this.renderer = renderer;
-        return marked(text || "", { renderer: this.renderer });
+      if (this.content) {
+        return parseScene(
+          text,
+          this.story.uid,
+          store.state.currentStoryContent,
+          store.state.context
+        );
       } else {
         return "";
       }

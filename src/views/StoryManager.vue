@@ -2,7 +2,7 @@
   <div class="home">
     <ul>
       <li v-for="story in allStories" :key="story.uid">
-        <router-link :to="`/story/${story.uid}/start`">{{story.name}}</router-link>
+        <router-link :to="`/story/${story.uid}`">{{story.name}}</router-link>
         <button @click="removeStory(story.uid)">x</button>
       </li>
     </ul>

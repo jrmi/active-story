@@ -1,6 +1,7 @@
 <template>
   <div class="story">
     <Scene
+      v-if="content"
       :content="content[scene]"
       :story="story"
       :scene="scene"

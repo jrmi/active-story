@@ -8,6 +8,7 @@ const store = {
     context: {},
     allStories: [],
     history: [],
+    currentScene: '',
     currentStory: {},
     currentStoryContent: {}
   },
@@ -34,7 +35,7 @@ const store = {
         `storyContent__${uid}`,
         JSON.stringify(defaultStory)
       );
-      this.loadStories();
+      await store.actions.loadStories();
     },
 
     async loadStory(uid) {
@@ -44,8 +45,12 @@ const store = {
       store.state.currentStoryContent = JSON.parse(
         localStorage.getItem(`storyContent__${uid}`)
       );
-      console.log('story loaded', store.state.currentStory);
-      console.log('story loaded bis', store.state.currentStoryContent);
+      const { context = {}, scene = 'start' } = JSON.parse(
+        localStorage.getItem(`storyContext__${uid}`)
+      );
+
+      store.state.context = context;
+      store.state.currentScene = scene;
     },
 
     async updateStory(story, content) {
@@ -54,24 +59,55 @@ const store = {
         `storyContent__${story.uid}`,
         JSON.stringify(content)
       );
-      await store.actions.loadStory();
-      //store.state.currentStory = story;
-      //store.state.currentStoryContent = content;
+      store.state.currentStory = story;
+      store.state.currentStoryContent = content;
     },
 
     async removeStory(uid) {
       localStorage.removeItem(`story__${uid}`);
       localStorage.removeItem(`storyContent__${uid}`);
-      this.loadStories();
+      await store.actions.loadStories();
     },
 
     async setContext(key, value) {
-      store.state.context[key] = value;
+      const { context, currentScene, currentStory } = store.state;
+
+      localStorage.setItem(
+        `storyContext__${currentStory.uid}`,
+        JSON.stringify({ context, scene: currentScene })
+      );
+
+      const newContext = { ...store.state.context };
+      newContext[key] = value;
+
+      store.state.context = newContext;
+    },
+
+    async resetContext() {
+      store.state.context = {};
+      store.state.currentScene = 'start';
+      localStorage.setItem(
+        `storyContext__${store.state.currentStory.uid}`,
+        JSON.stringify({
+          context: store.state.context,
+          scene: store.state.currentScene
+        })
+      );
+    },
+
+    async setCurrentScene(scene) {
+      const { context, currentStory } = store.state;
+      store.state.currentScene = scene;
+      localStorage.setItem(
+        `storyContext__${currentStory.uid}`,
+        JSON.stringify({ context, scene })
+      );
     },
 
     async addVisit(scene) {
       store.state.history.push(scene);
     },
+
     async popVisit() {
       return store.state.history.pop();
     }
@@ -80,10 +116,7 @@ const store = {
     {
       actions: {
         after(storeName, actionName, storeState) {
-          console.log(
-            `action ${actionName} is finished, this is my store : `,
-            storeState
-          );
+          console.log(`action ${actionName} is finished`);
         }
       }
     }

@@ -1,3 +1,6 @@
+import marked from 'marked';
+import handlebars from 'handlebars';
+
 const defaultDiacriticsRemovalap = [
   {
     base: 'A',
@@ -266,4 +269,27 @@ const guid = () => {
   return _p8() + _p8(true) + _p8(true) + _p8();
 };
 
-export { removeDiacritics, guid };
+const parseScene = (text, storyUid, storyContent, context) => {
+  const renderer = new marked.Renderer();
+  const old_rend = new marked.Renderer();
+  renderer.link = (href, title, text) => {
+    if (href.indexOf('http') != 0) {
+      const escapedLink = removeDiacritics(href.toLowerCase()).replace(
+        /[^\w]+/g,
+        '-'
+      );
+      return `<a href="#/story/${storyUid}/${escapedLink}" title="${title}">${text}</a>`;
+    } else {
+      return old_rend.link(href, title, text);
+    }
+  };
+  for (let key in storyContent) {
+    handlebars.registerPartial(key, storyContent[key]);
+  }
+  const template = handlebars.compile(text || '');
+  const parsed = template(context);
+  const markdown = marked(parsed, { renderer });
+  return markdown;
+};
+
+export { removeDiacritics, guid, parseScene };
