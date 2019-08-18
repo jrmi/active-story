@@ -33,13 +33,9 @@ export default {
     };
   },
   methods: {
-    handleUpdateStory(newStory) {
+    async handleUpdateStory(newStory) {
       console.log("updateStory");
-      this.storyContent = newStory;
-      localStorage.setItem(
-        `storyContent__${this.$route.params.story}`,
-        JSON.stringify(newStory)
-      );
+      await store.actions(this.$route.params.story, newStory);
     }
   },
   components: {

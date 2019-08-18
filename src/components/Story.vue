@@ -3,6 +3,7 @@
     <Scene
       :content="currentContent[currentScene]"
       :currentStory="currentStory"
+      :currentScene="currentScene"
       @updateScene="handleUpdateScene"
     />
   </div>
@@ -20,7 +21,7 @@ export default {
   },
   data() {
     return {
-      currentContent: Object
+      currentContent: {}
     };
   },
   components: {

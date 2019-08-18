@@ -15,47 +15,30 @@
 </template>
 
 <script>
-// @ is an alias to /src
 import Story from "@/components/Story.vue";
 import initialStory from "@/assets/test.json";
 import { guid } from "@/utils/text";
+import store from "@/store/store";
 
 export default {
   name: "StoryManager",
   data() {
     return {
-      allStories: [],
+      allStories: store.state.allStories,
       currentStoryName: ""
     };
   },
-  created() {
-    this.loadStories();
+  async created() {
+    await store.actions.loadStories();
+    console.log(store.state.allStories);
   },
   methods: {
-    loadStories() {
-      this.allStories = [];
-      for (var key in localStorage) {
-        if (key.startsWith("story__")) {
-          this.allStories.push(JSON.parse(localStorage[key]));
-        }
-      }
-    },
-    addStory() {
-      const uid = guid();
-      const storyDescriptor = { name: this.currentStoryName, uid };
-      const defaultStory = { start: "Start here !!!" };
-      localStorage.setItem(`story__${uid}`, JSON.stringify(storyDescriptor));
-      localStorage.setItem(
-        `storyContent__${uid}`,
-        JSON.stringify(defaultStory)
-      );
+    async addStory() {
+      await store.actions.addStory(this.currentStoryName);
       this.currentStoryName = "";
-      this.loadStories();
     },
-    removeStory(uid) {
-      localStorage.removeItem(`story__${uid}`);
-      localStorage.removeItem(`storyContent__${uid}`);
-      this.loadStories();
+    async removeStory(uid) {
+      await store.actions.removeStory(uid);
     }
   }
 };

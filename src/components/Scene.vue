@@ -18,10 +18,13 @@
 <script>
 import marked from "marked";
 import { removeDiacritics } from "@/utils/text";
+import store from "@/store/store";
+
 export default {
   name: "Scene",
   props: {
     content: String,
+    currentScene: String,
     currentStory: String,
     updateScene: Function
   },
@@ -32,6 +35,11 @@ export default {
       render: null,
       currentContent: ""
     };
+  },
+  watch: {
+    $route(to, from) {
+      this.addVisitToContext();
+    }
   },
   created() {
     const renderer = new marked.Renderer();
@@ -50,8 +58,18 @@ export default {
       }
     };
     this.renderer = renderer;
+    this.addVisitToContext();
   },
   methods: {
+    addVisitToContext() {
+      const newContext = { ...store.context };
+      if (newContext[`visited__${this.currentScene}`] === undefined) {
+        newContext[`visited__${this.currentScene}`] = 1;
+      } else {
+        newContext[`visited__${this.currentScene}`] += 1;
+      }
+      store.context = newContext;
+    },
     parse(text) {
       return marked(text || "", { renderer: this.renderer });
     },
