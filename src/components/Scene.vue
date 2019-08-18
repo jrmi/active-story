@@ -24,8 +24,8 @@ export default {
   name: "Scene",
   props: {
     content: String,
-    currentScene: String,
-    currentStory: String,
+    scene: String,
+    story: Object,
     updateScene: Function
   },
   data() {
@@ -36,42 +36,52 @@ export default {
       currentContent: ""
     };
   },
+  created() {
+    this.addVisitToContext();
+  },
   watch: {
     $route(to, from) {
       this.addVisitToContext();
+      console.log(to, from);
+      //store.actions.addVisit()
     }
   },
-  created() {
-    const renderer = new marked.Renderer();
-    const old_rend = new marked.Renderer();
-    renderer.link = (href, title, text) => {
-      if (href.indexOf("http") != 0) {
-        const escapedLink = removeDiacritics(href.toLowerCase()).replace(
-          /[^\w]+/g,
-          "-"
-        );
-        return `<a href="#/story/${
-          this.currentStory
-        }/${escapedLink}" title="${title}">${text}</a>`;
-      } else {
-        return old_rend.link(href, title, text);
-      }
-    };
-    this.renderer = renderer;
-    this.addVisitToContext();
-  },
   methods: {
-    addVisitToContext() {
-      const newContext = { ...store.context };
-      if (newContext[`visited__${this.currentScene}`] === undefined) {
-        newContext[`visited__${this.currentScene}`] = 1;
+    async addVisitToContext() {
+      const currentVisitedCount = store.state.context[`visited__${this.scene}`];
+      if (currentVisitedCount === undefined) {
+        await store.actions.setContext(`visited__${this.scene}`, 1);
       } else {
-        newContext[`visited__${this.currentScene}`] += 1;
+        await store.actions.setContext(
+          `visited__${this.scene}`,
+          currentVisitedCount + 1
+        );
       }
-      store.context = newContext;
     },
     parse(text) {
-      return marked(text || "", { renderer: this.renderer });
+      console.log("parse called");
+      if (this.story) {
+        console.log("Real render");
+        const renderer = new marked.Renderer();
+        const old_rend = new marked.Renderer();
+        renderer.link = (href, title, text) => {
+          if (href.indexOf("http") != 0) {
+            const escapedLink = removeDiacritics(href.toLowerCase()).replace(
+              /[^\w]+/g,
+              "-"
+            );
+            return `<a href="#/story/${
+              this.story.uid
+            }/${escapedLink}" title="${title}">${text}</a>`;
+          } else {
+            return old_rend.link(href, title, text);
+          }
+        };
+        this.renderer = renderer;
+        return marked(text || "", { renderer: this.renderer });
+      } else {
+        return "";
+      }
     },
     edit() {
       this.currentContent = this.content;

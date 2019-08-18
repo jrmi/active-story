@@ -1,9 +1,9 @@
 <template>
   <div class="story">
     <Scene
-      :content="currentContent[currentScene]"
-      :currentStory="currentStory"
-      :currentScene="currentScene"
+      :content="content[scene]"
+      :story="story"
+      :scene="scene"
       @updateScene="handleUpdateScene"
     />
   </div>
@@ -11,30 +11,26 @@
 
 <script>
 import Scene from "@/components/Scene.vue";
+import store from "@/store/store";
 
 export default {
   name: "Story",
   props: {
     content: Object,
-    currentScene: String,
-    currentStory: String
+    scene: String,
+    story: Object
   },
   data() {
-    return {
-      currentContent: {}
-    };
+    return {};
   },
   components: {
     Scene
   },
-  created() {
-    this.currentContent = this.content;
-  },
+  created() {},
   methods: {
     handleUpdateScene(text) {
-      const newContent = { ...this.currentContent };
-      newContent[this.currentScene] = text;
-      this.currentContent = newContent;
+      const newContent = { ...this.content };
+      newContent[this.scene] = text;
       this.$emit("updateStory", newContent);
     }
   }

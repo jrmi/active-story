@@ -1,9 +1,9 @@
 <template>
   <div class="home">
     <Story
-      :content="storyContent"
-      :currentStory="$route.params.story"
-      :currentScene="$route.params.scene"
+      :content="state.currentStoryContent"
+      :story="state.currentStory"
+      :scene="$route.params.scene"
       @updateStory="handleUpdateStory"
     />
   </div>
@@ -13,29 +13,24 @@
 // @ is an alias to /src
 import Story from "@/components/Story.vue";
 import defaultStory from "@/assets/test.json";
+import store from "@/store/store";
 
 export default {
   name: "StoryView",
-  created() {
-    // load the scene by name from localStorage or create one.
-    let story = JSON.parse(
-      localStorage.getItem(`storyContent__${this.$route.params.story}`)
-    );
-
-    if (!story) {
-      story = defaultStory;
-    }
-    this.storyContent = story;
-  },
   data() {
     return {
-      storyContent: {}
+      state: store.state
     };
   },
+  async created() {
+    // load the scene by name from localStorage
+    await store.actions.loadStory(this.$route.params.story);
+    console.log("pouet", store.state.currentStory);
+  },
   methods: {
-    async handleUpdateStory(newStory) {
+    async handleUpdateStory(newStoryContent) {
       console.log("updateStory");
-      await store.actions(this.$route.params.story, newStory);
+      await store.actions.updateStory(this.state.currentStory, newStoryContent);
     }
   },
   components: {
